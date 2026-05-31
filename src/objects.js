@@ -91,6 +91,20 @@ class Player {
   constructor(name) {
     this.name = name;
     this.board = new Gameboard();
+    this.madeAttacks = [];
+  }
+
+  randomAttack() {
+    while (true) {
+      const x = Math.floor(Math.random() * 10);
+      const y = Math.floor(Math.random() * 10);
+      const coords = [x, y];
+
+      if (!this.madeAttacks.includes(JSON.stringify(coords))) {
+        this.madeAttacks.push(JSON.stringify(coords));
+        return coords;
+      }
+    }
   }
 }
 

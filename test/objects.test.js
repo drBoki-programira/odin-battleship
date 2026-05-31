@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "../src/objects";
+import { Ship, Gameboard, Player } from "../src/objects";
 
 describe("Ship class tests: ", () => {
   let cruiser;
@@ -100,5 +100,40 @@ describe("Gameboard class tests: ", () => {
 
     board.recieveAttack(2, 0);
     expect(board.allSunken()).toBe(true);
+  });
+});
+
+describe("Player class tests: ", () => {
+  let player;
+
+  beforeEach(() => {
+    player = new Player("p1");
+  });
+
+  afterEach(() => {
+    jest.spyOn(Math, "random").mockRestore();
+  });
+
+  test("randomAttack: should generate random set of coordinates", () => {
+    jest
+      .spyOn(Math, "random")
+      .mockReturnValueOnce(0.1)
+      .mockReturnValueOnce(0.9);
+    expect(player.randomAttack()).toEqual([1, 9]);
+  });
+
+  test("randomAttack: coords should always be between 0 and 9 and never same pair of values", () => {
+    for (let i = 0; i < 100; i++) {
+      const [x, y] = player.randomAttack();
+
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(x).toBeLessThanOrEqual(9);
+      expect(y).toBeGreaterThanOrEqual(0);
+      expect(y).toBeLessThanOrEqual(9);
+    }
+    expect(player.madeAttacks.length).toEqual(100);
+
+    const setAtt = new Set(player.madeAttacks);
+    expect(setAtt.size).toEqual(100);
   });
 });
