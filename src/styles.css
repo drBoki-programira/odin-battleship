@@ -27,7 +27,15 @@ body {
   justify-content: center;
 }
 
-.board {
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.board-tiles {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);

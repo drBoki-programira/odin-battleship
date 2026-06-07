@@ -4,20 +4,46 @@ import DOMHandler from "./display";
 
 class Game {
   constructor() {
-    this.p1 = new Player("P1 name");
-    this.p2 = new Player("P2 name");
     this.ui = new DOMHandler();
-    this.gameMode = "pve";
   }
 
   init() {
-    this.placeShips();
-    this.p1BoardDisplay = this.ui.displayBoard(this.p1.board, true);
-    this.p2BoardDisplay = this.ui.displayBoard(this.p2.board, false);
+    this.startScreen = this.ui.displayStartScreen()
+    this.startScreenEvents()
+  }
+
+  startScreenEvents() {
+    this.startScreen.addEventListener("click", (event) => {
+      const scn = event.currentTarget
+      const btn = event.target.closest("button")
+      if (!btn) return
+
+      this.gameMode = scn.querySelector("[name='mode']:checked").value
+      const p1name = scn.querySelector("#p1name").value
+      const p2name = this.gameMode === "pve" ? "AI" : scn.querySelector("#p2name>input").value
+      
+      this.p1 = new Player(p1name);
+      this.p2 = new Player(p2name);
+      
+      this.placeShipsStage()
+    })
+
+    this.startScreen.addEventListener("change", (event) => {
+      if (event.target.type === "radio") {
+        const mode = event.target.value
+        this.ui.updatePlayer2(mode)
+      }
+    })
+  }
+
+  placeShipsStage() {
+    this.randomPlaceShips();
+    this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+    this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
     this.addBoardListener();
   }
 
-  placeShips() {
+  randomPlaceShips() {
     this.p1.board.place(new Ship(4), 0, 0, true);
     this.p1.board.place(new Ship(3), 2, 0, false);
     this.p1.board.place(new Ship(2), 0, 6, true);
