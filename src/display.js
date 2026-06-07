@@ -16,9 +16,11 @@ export default class DOMHandler {
   }
 
   displayBoard(player, revealed) {
-    const board = this._makeChildOf(this.main, "div", {})
-    this._makeChildOf(board, "h2", {"textContent": player.name})
-    const boardTiles = this._makeChildOf(board, "div", { className: "board-tiles" });
+    const board = this.main.querySelector(".boards")
+
+    const playerBoard = this._makeChildOf(board, "div", {})
+    this._makeChildOf(playerBoard, "h2", {"textContent": player.name})
+    const boardTiles = this._makeChildOf(playerBoard, "div", { className: "board-tiles" });
 
     for (let x = 0; x < 10; x++) {
       for (let y = 0; y < 10; y++) {
@@ -33,7 +35,7 @@ export default class DOMHandler {
       }
     }
 
-    return board;
+    return playerBoard;
   }
 
   updateTile(tile, result) {
@@ -57,10 +59,10 @@ export default class DOMHandler {
 
     this._makeChildOf(content, "h4", {"textContent": "Enter player names: "})
     
-    const names = this._makeChildOf(content, "div", {"id": "radio-btns"})
-    const p1Label = this._makeChildOf(names, "label", {"textContent": "Player 1"})
+    this.names = this._makeChildOf(content, "div", {"id": "radio-btns"})
+    const p1Label = this._makeChildOf(this.names, "label", {"textContent": "Player 1"})
     this._makeChildOf(p1Label, "input", {"type": "text", "id": "p1name", "name": "p1name"})
-    this._makeChildOf(names, "h5", {"textContent": "AI", "id": "p2name"})
+    this._makeChildOf(this.names, "h5", {"textContent": "AI", "id": "p2name"})
 
     this._makeChildOf(content, "button", {"textContent": "Place ships"})
 
@@ -68,15 +70,51 @@ export default class DOMHandler {
   }
 
   updatePlayer2 (mode) {
-    const names = document.querySelector("#radio-btns")
-    const p2 = names.querySelector("#p2name")
+    const p2 = this.names.querySelector("#p2name")
     p2.remove()
 
     if (mode === "pvp") {
-      const p2Label = this._makeChildOf(names, "label", {"textContent": "Player 2", "id": "p2name"})
+      const p2Label = this._makeChildOf(this.names, "label", {"textContent": "Player 2", "id": "p2name"})
       this._makeChildOf(p2Label, "input", {"type": "text", "name": "p2name"})
     } else {
-      this._makeChildOf(names, "h5", {"textContent": "AI", "id": "p2name"})
+      this._makeChildOf(this.names, "h5", {"textContent": "AI", "id": "p2name"})
     }
+  }
+
+  displayPlaceShips () {
+    this.main.innerHTML = ""
+
+    this.info = this._makeChildOf(this.main, "div", {"id": "info-text", "textContent": "Ship placement"})
+
+    const placement = this._makeChildOf(this.main, "div", {"id": "ship-placement"})
+    const rngBtn = this._makeChildOf(placement, "button", {"className": "btn", "textContent": "Random Placement"})
+    rngBtn.dataset.action = "random"
+    const startBtn = this._makeChildOf(placement, "button", {"className": "btn", "textContent": "Start Game"})
+    startBtn.dataset.action = "start"
+
+    this._makeChildOf(this.main, "div", {"className": "boards"})
+
+    return placement
+  }
+
+  updateInfo(message) {
+    this.info.textContent = message
+  }
+
+  displayGameScreen () {
+    this.main.innerHTML = ""
+
+    this.info = this._makeChildOf(this.main, "div", {"id": "info-text", "textContent": "Game loop"})
+
+    this._makeChildOf(this.main, "div", {"className": "boards"})
+  }
+
+  removeBoard (boardElement) {
+    boardElement.remove()
+  }
+
+  blockBoardClicks (yes, board) {
+    if (yes) board.classList.add("blocked")
+    else board.classList.remove("blocked")
   }
 }

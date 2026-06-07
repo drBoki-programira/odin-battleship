@@ -22,8 +22,7 @@ body {
 
 #content {
   flex: 1;
-  display: flex;
-  gap: 50px;
+  display: grid;
   justify-content: center;
 }
 
@@ -33,6 +32,23 @@ body {
   gap: 30px;
   align-items: center;
   margin-top: 30px;
+}
+
+#info-text {
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  font-size: 2rem;
+}
+
+.boards {
+  display: flex;
+  gap: 50px;
+  justify-content: center;
+}
+
+h2 {
+  text-align: center;
 }
 
 .board-tiles {
@@ -64,4 +80,8 @@ body {
 
 [data-status="miss"] {
   background-color: crimson;
+}
+
+.blocked {
+  pointer-events: none;
 }

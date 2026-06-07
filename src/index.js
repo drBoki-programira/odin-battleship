@@ -25,7 +25,9 @@ class Game {
       this.p1 = new Player(p1name);
       this.p2 = new Player(p2name);
       
-      this.placeShipsStage()
+      this.placementScreen = this.ui.displayPlaceShips()
+      this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+      this.placeShipsEvents()
     })
 
     this.startScreen.addEventListener("change", (event) => {
@@ -36,11 +38,27 @@ class Game {
     })
   }
 
-  placeShipsStage() {
-    this.randomPlaceShips();
-    this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-    this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
-    this.addBoardListener();
+  placeShipsEvents() {
+    this.placementScreen.addEventListener("click", (event) => {
+      const btn = event.target.closest(".btn")
+      if (!btn) return
+
+      const action = btn.dataset.action
+
+      switch (action) {
+        case "random":
+          this.randomPlaceShips()
+          this.ui.removeBoard(this.p1BoardDisplay)
+          this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+          break
+        case "start":
+          this.ui.displayGameScreen()
+          this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+          this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
+          this.addBoardListener();
+        default:
+      }
+    })
   }
 
   randomPlaceShips() {
@@ -68,8 +86,10 @@ class Game {
       const result = this.p2.board.recieveAttack(x, y);
       this.ui.updateTile(tile, result);
 
-      if (result === "SUNK" && this.p2.board.allSunken())
-        console.log("GAME OVER");
+      if (result === "SUNK" && this.p2.board.allSunken()) {
+        this.ui.updateInfo(`GAME OVER. ${this.p1.name} wins!`)
+        this.ui.blockBoardClicks(true, this.p2BoardDisplay)
+      }
 
       if (this.gameMode === "pve") this.computerAttack();
     });
@@ -84,8 +104,10 @@ class Game {
     );
     this.ui.updateTile(tile, result);
 
-    if (result === "SUNK" && this.p1.board.allSunken())
-      console.log("GAME OVER");
+    if (result === "SUNK" && this.p1.board.allSunken()) {
+      this.ui.updateInfo("GAME OVER. AI WINS!")
+      this.ui.blockBoardClicks(true, this.p2BoardDisplay)
+    }
   }
 }
 
