@@ -94,7 +94,7 @@ class Player {
     this.madeAttacks = [];
   }
 
-  randomAttack() {
+  randomCoords() {
     while (true) {
       const x = Math.floor(Math.random() * 10);
       const y = Math.floor(Math.random() * 10);

@@ -5,72 +5,80 @@ import DOMHandler from "./display";
 class Game {
   constructor() {
     this.ui = new DOMHandler();
+    this.gameOver = false;
   }
 
   init() {
-    this.startScreen = this.ui.displayStartScreen()
-    this.startScreenEvents()
+    this.startScreen = this.ui.displayStartScreen();
+    this.startScreenEvents();
   }
 
   startScreenEvents() {
     this.startScreen.addEventListener("click", (event) => {
-      const scn = event.currentTarget
-      const btn = event.target.closest("button")
-      if (!btn) return
+      const scn = event.currentTarget;
+      const btn = event.target.closest("button");
+      if (!btn) return;
 
-      this.gameMode = scn.querySelector("[name='mode']:checked").value
-      const p1name = scn.querySelector("#p1name").value
-      const p2name = this.gameMode === "pve" ? "AI" : scn.querySelector("#p2name>input").value
-      
+      this.gameMode = scn.querySelector("[name='mode']:checked").value;
+      const p1name = scn.querySelector("#p1name").value;
+      const p2name =
+        this.gameMode === "pve"
+          ? "AI"
+          : scn.querySelector("#p2name>input").value;
+
       this.p1 = new Player(p1name);
       this.p2 = new Player(p2name);
-      
-      this.placementScreen = this.ui.displayPlaceShips()
+
+      this.placementScreen = this.ui.displayPlaceShips();
       this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-      this.placeShipsEvents()
-    })
+      this.placeShipsEvents();
+    });
 
     this.startScreen.addEventListener("change", (event) => {
       if (event.target.type === "radio") {
-        const mode = event.target.value
-        this.ui.updatePlayer2(mode)
+        const mode = event.target.value;
+        this.ui.updatePlayer2(mode);
       }
-    })
+    });
   }
 
   placeShipsEvents() {
     this.placementScreen.addEventListener("click", (event) => {
-      const btn = event.target.closest(".btn")
-      if (!btn) return
+      const btn = event.target.closest(".btn");
+      if (!btn) return;
 
-      const action = btn.dataset.action
+      const action = btn.dataset.action;
 
       switch (action) {
         case "random":
-          this.randomPlaceShips()
-          this.ui.removeBoard(this.p1BoardDisplay)
+          this.randomShipPlacement(this.p1);
+          this.ui.removeBoard(this.p1BoardDisplay);
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-          break
+          break;
         case "start":
-          this.ui.displayGameScreen()
+          this.randomShipPlacement(this.p2);
+          this.ui.displayGameScreen();
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
           this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
           this.addBoardListener();
         default:
       }
-    })
+    });
   }
 
-  randomPlaceShips() {
-    this.p1.board.place(new Ship(4), 0, 0, true);
-    this.p1.board.place(new Ship(3), 2, 0, false);
-    this.p1.board.place(new Ship(2), 0, 6, true);
-    this.p1.board.place(new Ship(1), 2, 6, true);
+  randomShipPlacement(player) {
+    const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 
-    this.p2.board.place(new Ship(4), 4, 4, true);
-    this.p2.board.place(new Ship(3), 6, 0, false);
-    this.p2.board.place(new Ship(2), 8, 8, true);
-    this.p2.board.place(new Ship(1), 1, 2, true);
+    while (shipsToPlace.length > 0) {
+      const shipLen = shipsToPlace.pop();
+      try {
+        const [x, y] = player.randomCoords();
+        const direction = Math.random() >= 0.5;
+        player.board.place(new Ship(shipLen), x, y, direction);
+      } catch {
+        shipsToPlace.push(shipLen);
+      }
+    }
   }
 
   addBoardListener() {
@@ -86,28 +94,47 @@ class Game {
       const result = this.p2.board.recieveAttack(x, y);
       this.ui.updateTile(tile, result);
 
-      if (result === "SUNK" && this.p2.board.allSunken()) {
-        this.ui.updateInfo(`GAME OVER. ${this.p1.name} wins!`)
-        this.ui.blockBoardClicks(true, this.p2BoardDisplay)
-      }
+      this.attackOutcome(result, this.p1, this.p2);
+
+      if (this.gameOver) return;
 
       if (this.gameMode === "pve") this.computerAttack();
     });
   }
 
-  computerAttack() {
-    const [x, y] = this.p2.randomAttack();
-    const result = this.p1.board.recieveAttack(x, y);
-
-    const tile = this.p1BoardDisplay.querySelector(
-      `[data-x="${x}"][data-y="${y}"]`,
-    );
-    this.ui.updateTile(tile, result);
-
-    if (result === "SUNK" && this.p1.board.allSunken()) {
-      this.ui.updateInfo("GAME OVER. AI WINS!")
-      this.ui.blockBoardClicks(true, this.p2BoardDisplay)
+  attackOutcome(result, attacker, reciever) {
+    if (result === "HIT") {
+      this.ui.updateInfo(
+        `${attacker.name} has HIT the ship of ${reciever.name}!`,
+      );
+    } else if (result === "SUNK") {
+      if (reciever.board.allSunken()) {
+        this.gameOver = true;
+        this.ui.updateInfo(`GAME OVER. ${attacker.name} wins!`);
+        this.ui.blockBoardClicks();
+      } else {
+        this.ui.updateInfo(
+          `${attacker.name} has SUNK the ship of ${reciever.name}!`,
+        );
+      }
+    } else {
+      this.ui.updateInfo(`${attacker.name} attacks... And it's a MISS!`);
     }
+  }
+
+  computerAttack() {
+    this.ui.blockBoardClicks();
+    setTimeout(() => {
+      this.ui.unblockBoardClicks();
+      const [x, y] = this.p2.randomCoords();
+      const result = this.p1.board.recieveAttack(x, y);
+
+      const tile = this.p1BoardDisplay.querySelector(
+        `[data-x="${x}"][data-y="${y}"]`,
+      );
+      this.ui.updateTile(tile, result);
+      this.attackOutcome(result, this.p2, this.p1);
+    }, 1500);
   }
 }
 

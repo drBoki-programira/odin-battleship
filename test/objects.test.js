@@ -122,9 +122,9 @@ describe("Player class tests: ", () => {
     expect(player.randomAttack()).toEqual([1, 9]);
   });
 
-  test("randomAttack: coords should always be between 0 and 9 and never same pair of values", () => {
+  test("randomCoords: coords should always be between 0 and 9 and never same pair of values", () => {
     for (let i = 0; i < 100; i++) {
-      const [x, y] = player.randomAttack();
+      const [x, y] = player.randomCoords();
 
       expect(x).toBeGreaterThanOrEqual(0);
       expect(x).toBeLessThanOrEqual(9);
