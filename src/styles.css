@@ -23,18 +23,26 @@ body {
 #content {
   flex: 1;
   display: grid;
-  justify-content: center;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 9fr;
+  place-content: center;
+  gap: 10px;
+  max-width: fit-content;
+  margin: auto;
 }
 
 #start-screen {
+  grid-column: span 2;
   display: flex;
   flex-direction: column;
   gap: 30px;
   align-items: center;
+  width: 100%;
   margin-top: 30px;
 }
 
 #info-text {
+  grid-column: span 2;
   text-align: center;
   margin: 10px;
   padding: 10px;
@@ -42,6 +50,7 @@ body {
 }
 
 .boards {
+  grid-column: span 2;
   display: flex;
   gap: 50px;
   justify-content: center;
@@ -49,6 +58,40 @@ body {
 
 h2 {
   text-align: center;
+}
+
+#ship-placement {
+  background-color: blueviolet;
+  max-width: 400px;
+}
+
+#ship-display {
+  padding: 20px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ship-element {
+  display: flex;
+  flex-direction: row;
+}
+[data-placement="docked"] {
+  background-color: aquamarine;
+}
+[data-placement="anchored"] {
+  background-color: blue;
+}
+[data-placement="pending"] {
+  background-color: red;
+}
+
+.ship-section {
+  height: 30px;
+  width: 30px;
+  outline: 2px solid black;
 }
 
 .board-tiles {

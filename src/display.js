@@ -15,39 +15,6 @@ export default class DOMHandler {
     return child;
   }
 
-  displayBoard(player, revealed) {
-    const board = this.main.querySelector(".boards");
-
-    const playerBoard = this._makeChildOf(board, "div", {});
-    this._makeChildOf(playerBoard, "h2", { textContent: player.name });
-    const boardTiles = this._makeChildOf(playerBoard, "div", {
-      className: "board-tiles",
-    });
-
-    for (let x = 0; x < 10; x++) {
-      for (let y = 0; y < 10; y++) {
-        const tile = this._makeChildOf(boardTiles, "div", {
-          className: "tile",
-        });
-        tile.dataset.x = x;
-        tile.dataset.y = y;
-        tile.dataset.status = "";
-
-        if (revealed) {
-          if (player.board.grid[x][y] > -1) tile.classList.add("ship");
-        }
-      }
-    }
-
-    return playerBoard;
-  }
-
-  updateTile(tile, result) {
-    tile.textContent = "X";
-    if (result === "HIT" || result === "SUNK") tile.dataset.status = "hit";
-    else tile.dataset.status = "miss";
-  }
-
   displayStartScreen() {
     this.main.innerHTML = "";
     const content = this._makeChildOf(this.main, "div", { id: "start-screen" });
@@ -105,7 +72,7 @@ export default class DOMHandler {
     }
   }
 
-  displayPlaceShips() {
+  displayInfoAndBoards() {
     this.main.innerHTML = "";
 
     this.info = this._makeChildOf(this.main, "div", {
@@ -113,9 +80,51 @@ export default class DOMHandler {
       textContent: "Ship placement",
     });
 
-    const placement = this._makeChildOf(this.main, "div", {
+    this.boards = this._makeChildOf(this.main, "div", { className: "boards" });
+  }
+
+  updateInfo(message) {
+    this.info.textContent = message;
+  }
+
+  displayPlacementBoard(player) {
+    const ships = player.shipsToPlace
+    let shipIdx = 0
+    const placement = this._makeChildOf(this.boards, "div", {
       id: "ship-placement",
     });
+
+    const legend = this._makeChildOf(placement, "div", {})
+    const docked = this._makeChildOf(legend, "div", {})
+    docked.dataset.placement = "docked"
+    this._makeChildOf(docked, "div", {className: "ship-section"})
+    this._makeChildOf(docked, "span", {textContent: "Ships to be placed."})
+    const anchored = this._makeChildOf(legend, "div", {})
+    anchored.dataset.placement = "anchored"
+    this._makeChildOf(anchored, "div", {className: "ship-section"})
+    this._makeChildOf(anchored, "span", {textContent: "Placed ships."})
+    const pending = this._makeChildOf(legend, "div", {})
+    pending.dataset.placement = "pending"
+    this._makeChildOf(pending, "div", {className: "ship-section"})
+    this._makeChildOf(pending, "span", {textContent: "Currently placing ship"})
+
+    const shipDisplay = this._makeChildOf(placement, "div", {id: "ship-display"})
+    for (let ship of ships) {
+      const shipElement = this._makeChildOf(shipDisplay, "div", {className: "ship-element"})
+      shipElement.dataset.idx = shipIdx
+      shipElement.dataset.placement = "docked"
+      shipIdx++
+
+      for (let i = 0; i < ship; i++) {
+        this._makeChildOf(shipElement, "div", {className: "ship-section"})
+      }
+    }
+
+    this._makeChildOf(placement, "input", {type: "text", id: "coords", name: "00"})
+    this._makeChildOf(placement, "input", {type: "checkbox", id: "dir", value: "hor"})
+    const placeBtn = this._makeChildOf(placement, "button", {className: "btn", textContent: "Place Ship"})
+    placeBtn.dataset.action = "place"
+
     const rngBtn = this._makeChildOf(placement, "button", {
       className: "btn",
       textContent: "Random Placement",
@@ -127,24 +136,49 @@ export default class DOMHandler {
     });
     startBtn.dataset.action = "start";
 
-    this._makeChildOf(this.main, "div", { className: "boards" });
-
     return placement;
   }
 
-  updateInfo(message) {
-    this.info.textContent = message;
+  updateShipPlacement (player) {
+    const len = player.shipsToPlace.length - 1
+    const shipELements = document.querySelectorAll(".ship-element")
+    shipELements.forEach(ship => {
+      const idx = parseInt(ship.dataset.idx)
+      if (len === idx) ship.dataset.placement = "pending"
+      else if (len < idx) ship.dataset.placement = "anchored"
+    })
   }
 
-  displayGameScreen() {
-    this.main.innerHTML = "";
+  displayBoard(player, revealed) {
 
-    this.info = this._makeChildOf(this.main, "div", {
-      id: "info-text",
-      textContent: "Game loop",
+    const playerBoard = this._makeChildOf(this.boards, "div", {});
+    this._makeChildOf(playerBoard, "h2", { textContent: player.name });
+    const boardTiles = this._makeChildOf(playerBoard, "div", {
+      className: "board-tiles",
     });
 
-    this._makeChildOf(this.main, "div", { className: "boards" });
+    for (let x = 0; x < 10; x++) {
+      for (let y = 0; y < 10; y++) {
+        const tile = this._makeChildOf(boardTiles, "div", {
+          className: "tile",
+        });
+        tile.dataset.x = x;
+        tile.dataset.y = y;
+        tile.dataset.status = "";
+
+        if (revealed) {
+          if (player.board.grid[x][y] > -1) tile.classList.add("ship");
+        }
+      }
+    }
+
+    return playerBoard;
+  }
+
+  updateTile(tile, result) {
+    tile.textContent = "X";
+    if (result === "HIT" || result === "SUNK") tile.dataset.status = "hit";
+    else tile.dataset.status = "miss";
   }
 
   removeBoard(boardElement) {

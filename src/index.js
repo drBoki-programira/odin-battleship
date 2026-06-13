@@ -29,8 +29,10 @@ class Game {
       this.p1 = new Player(p1name);
       this.p2 = new Player(p2name);
 
-      this.placementScreen = this.ui.displayPlaceShips();
+      this.ui.displayInfoAndBoards()
+      this.placementBoard = this.ui.displayPlacementBoard(this.p1);
       this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+      this.ui.updateShipPlacement(this.p1)
       this.placeShipsEvents();
     });
 
@@ -43,21 +45,38 @@ class Game {
   }
 
   placeShipsEvents() {
-    this.placementScreen.addEventListener("click", (event) => {
+    this.placementBoard.addEventListener("click", (event) => {
+      const container = event.currentTarget
       const btn = event.target.closest(".btn");
       if (!btn) return;
 
       const action = btn.dataset.action;
 
       switch (action) {
+        case "place":
+          const shipLen = this.p1.shipsToPlace.pop()
+          try {
+            const [x, y, dir] = this.parseInput()
+            this.p1.board.place(new Ship(shipLen), x, y, dir)
+            this.ui.updateInfo("Ship placement succesful")
+            this.ui.removeBoard(this.p1BoardDisplay)
+            this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+            this.ui.updateShipPlacement(this.p1)
+          } catch (err) {
+            this.p1.shipsToPlace.push(shipLen)
+            this.ui.updateInfo(err.message)
+          }
+          break
         case "random":
           this.randomShipPlacement(this.p1);
           this.ui.removeBoard(this.p1BoardDisplay);
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+          this.ui.updateInfo("All ships are placed. Ready for next stage.")
+          this.ui.updateShipPlacement(this.p1)
           break;
         case "start":
           this.randomShipPlacement(this.p2);
-          this.ui.displayGameScreen();
+          this.ui.displayInfoAndBoards()
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
           this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
           this.addBoardListener();
@@ -66,8 +85,16 @@ class Game {
     });
   }
 
+  parseInput ()  {
+    const coords = document.querySelector("#coords").value
+    const [x, y] = coords.split("").map(coord => parseInt(coord))
+    const direction = document.querySelector("#dir").checked
+
+    return [x, y, direction]
+  }
+
   randomShipPlacement(player) {
-    const shipsToPlace = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+    const shipsToPlace = player.shipsToPlace
 
     while (shipsToPlace.length > 0) {
       const shipLen = shipsToPlace.pop();
