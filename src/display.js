@@ -88,42 +88,59 @@ export default class DOMHandler {
   }
 
   displayPlacementBoard(player) {
-    const ships = player.shipsToPlace
-    let shipIdx = 0
+    const ships = player.shipsToPlace;
+    let shipIdx = 0;
     const placement = this._makeChildOf(this.boards, "div", {
       id: "ship-placement",
     });
 
-    const legend = this._makeChildOf(placement, "div", {})
-    const docked = this._makeChildOf(legend, "div", {})
-    docked.dataset.placement = "docked"
-    this._makeChildOf(docked, "div", {className: "ship-section"})
-    this._makeChildOf(docked, "span", {textContent: "Ships to be placed."})
-    const anchored = this._makeChildOf(legend, "div", {})
-    anchored.dataset.placement = "anchored"
-    this._makeChildOf(anchored, "div", {className: "ship-section"})
-    this._makeChildOf(anchored, "span", {textContent: "Placed ships."})
-    const pending = this._makeChildOf(legend, "div", {})
-    pending.dataset.placement = "pending"
-    this._makeChildOf(pending, "div", {className: "ship-section"})
-    this._makeChildOf(pending, "span", {textContent: "Currently placing ship"})
+    const legend = this._makeChildOf(placement, "div", {});
+    const docked = this._makeChildOf(legend, "div", {});
+    docked.dataset.placement = "docked";
+    this._makeChildOf(docked, "div", { className: "ship-section" });
+    this._makeChildOf(docked, "span", { textContent: "Ships to be placed." });
+    const anchored = this._makeChildOf(legend, "div", {});
+    anchored.dataset.placement = "anchored";
+    this._makeChildOf(anchored, "div", { className: "ship-section" });
+    this._makeChildOf(anchored, "span", { textContent: "Placed ships." });
+    const pending = this._makeChildOf(legend, "div", {});
+    pending.dataset.placement = "pending";
+    this._makeChildOf(pending, "div", { className: "ship-section" });
+    this._makeChildOf(pending, "span", {
+      textContent: "Currently placing ship",
+    });
 
-    const shipDisplay = this._makeChildOf(placement, "div", {id: "ship-display"})
+    const shipDisplay = this._makeChildOf(placement, "div", {
+      id: "ship-display",
+    });
     for (let ship of ships) {
-      const shipElement = this._makeChildOf(shipDisplay, "div", {className: "ship-element"})
-      shipElement.dataset.idx = shipIdx
-      shipElement.dataset.placement = "docked"
-      shipIdx++
+      const shipElement = this._makeChildOf(shipDisplay, "div", {
+        className: "ship-element",
+      });
+      shipElement.dataset.idx = shipIdx;
+      shipElement.dataset.placement = "docked";
+      shipIdx++;
 
       for (let i = 0; i < ship; i++) {
-        this._makeChildOf(shipElement, "div", {className: "ship-section"})
+        this._makeChildOf(shipElement, "div", { className: "ship-section" });
       }
     }
 
-    this._makeChildOf(placement, "input", {type: "text", id: "coords", name: "00"})
-    this._makeChildOf(placement, "input", {type: "checkbox", id: "dir", value: "hor"})
-    const placeBtn = this._makeChildOf(placement, "button", {className: "btn", textContent: "Place Ship"})
-    placeBtn.dataset.action = "place"
+    this._makeChildOf(placement, "input", {
+      type: "text",
+      id: "coords",
+      name: "00",
+    });
+    this._makeChildOf(placement, "input", {
+      type: "checkbox",
+      id: "dir",
+      value: "hor",
+    });
+    const placeBtn = this._makeChildOf(placement, "button", {
+      className: "btn",
+      textContent: "Place Ship",
+    });
+    placeBtn.dataset.action = "place";
 
     const rngBtn = this._makeChildOf(placement, "button", {
       className: "btn",
@@ -139,18 +156,17 @@ export default class DOMHandler {
     return placement;
   }
 
-  updateShipPlacement (player) {
-    const len = player.shipsToPlace.length - 1
-    const shipELements = document.querySelectorAll(".ship-element")
-    shipELements.forEach(ship => {
-      const idx = parseInt(ship.dataset.idx)
-      if (len === idx) ship.dataset.placement = "pending"
-      else if (len < idx) ship.dataset.placement = "anchored"
-    })
+  updateShipPlacement(player) {
+    const len = player.shipsToPlace.length - 1;
+    const shipELements = document.querySelectorAll(".ship-element");
+    shipELements.forEach((ship) => {
+      const idx = parseInt(ship.dataset.idx);
+      if (len === idx) ship.dataset.placement = "pending";
+      else if (len < idx) ship.dataset.placement = "anchored";
+    });
   }
 
   displayBoard(player, revealed) {
-
     const playerBoard = this._makeChildOf(this.boards, "div", {});
     this._makeChildOf(playerBoard, "h2", { textContent: player.name });
     const boardTiles = this._makeChildOf(playerBoard, "div", {

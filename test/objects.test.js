@@ -114,12 +114,12 @@ describe("Player class tests: ", () => {
     jest.spyOn(Math, "random").mockRestore();
   });
 
-  test("randomAttack: should generate random set of coordinates", () => {
+  test("randomCoords: should generate random set of coordinates", () => {
     jest
       .spyOn(Math, "random")
       .mockReturnValueOnce(0.1)
       .mockReturnValueOnce(0.9);
-    expect(player.randomAttack()).toEqual([1, 9]);
+    expect(player.randomCoords()).toEqual([1, 9]);
   });
 
   test("randomCoords: coords should always be between 0 and 9 and never same pair of values", () => {
@@ -131,9 +131,49 @@ describe("Player class tests: ", () => {
       expect(y).toBeGreaterThanOrEqual(0);
       expect(y).toBeLessThanOrEqual(9);
     }
-    expect(player.madeAttacks.length).toEqual(100);
+    expect(player.madeAttacks.size).toEqual(100);
+  });
 
-    const setAtt = new Set(player.madeAttacks);
-    expect(setAtt.size).toEqual(100);
+  test("parseAttackResult: should take in a pair of coords and result of the attack, and place adequate coords into hitConfirmed and priorityAttack properties", () => {
+    player.parseAttackResult([1, 1], "HIT");
+    expect(player.hitConfirmed).toEqual(["[1,1]"]);
+    expect(player.priorityAttack).toEqual(["[0,1]", "[2,1]", "[1,0]", "[1,2]"]);
+    player.parseAttackResult([0, 0], "SUNK");
+    player.parseAttackResult([0, 0], "HIT");
+    expect(player.hitConfirmed).toEqual(["[0,0]"]);
+    expect(player.priorityAttack).toEqual(["[1,0]", "[0,1]"]);
+  });
+
+  test("parseAttackResult: consecutive hits should update priorityAttack correctly", () => {
+    player.parseAttackResult([0, 0], "HIT");
+    player.parseAttackResult([0, 1], "HIT");
+    player.parseAttackResult([0, 2], "HIT");
+    expect(player.hitConfirmed).toEqual(["[0,0]", "[0,1]", "[0,2]"]);
+    expect(player.priorityAttack).toEqual(["[0,3]"]);
+    player.parseAttackResult([0, 0], "SUNK");
+    player.parseAttackResult([1, 1], "HIT");
+    player.parseAttackResult([1, 2], "HIT");
+    expect(player.hitConfirmed).toEqual(["[1,1]", "[1,2]"]);
+    expect(player.priorityAttack).toEqual(["[1,0]", "[1,3]"]);
+  });
+
+  test("parseAttackResult: should correctly update madeAttacks property when ship is sunk", () => {
+    player.parseAttackResult([1, 1], "HIT");
+    player.parseAttackResult([2, 1], "SUNK");
+    const arr = [...player.madeAttacks].sort();
+    expect(arr).toEqual([
+      "[0,0]",
+      "[0,1]",
+      "[0,2]",
+      "[1,0]",
+      "[1,1]",
+      "[1,2]",
+      "[2,0]",
+      "[2,1]",
+      "[2,2]",
+      "[3,0]",
+      "[3,1]",
+      "[3,2]",
+    ]);
   });
 });
