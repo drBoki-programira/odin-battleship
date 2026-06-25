@@ -20,10 +20,10 @@ export default class DOMHandler {
     const content = this._makeChildOf(this.main, "div", { id: "start-screen" });
 
     this._makeChildOf(content, "h2", { textContent: "Welcome to the game" });
-    this._makeChildOf(content, "h4", { textContent: "Choose game mode: " });
+    this._makeChildOf(content, "h4", { textContent: "Choose game mode" });
 
     const modes = this._makeChildOf(content, "div", {});
-    const pveLabel = this._makeChildOf(modes, "label", { textContent: "PvE" });
+    const pveLabel = this._makeChildOf(modes, "label", { className: "radio-squares", textContent: "PvE" });
     this._makeChildOf(pveLabel, "input", {
       type: "radio",
       id: "pve",
@@ -31,7 +31,8 @@ export default class DOMHandler {
       value: "pve",
       checked: true,
     });
-    const pvpLabel = this._makeChildOf(modes, "label", { textContent: "PvP" });
+    this._makeChildOf(modes, "span", {textContent: "or"})
+    const pvpLabel = this._makeChildOf(modes, "label", { className: "radio-squares", textContent: "PvP" });
     this._makeChildOf(pvpLabel, "input", {
       type: "radio",
       id: "pvp",
@@ -39,20 +40,22 @@ export default class DOMHandler {
       value: "pvp",
     });
 
-    this._makeChildOf(content, "h4", { textContent: "Enter player names: " });
+    this._makeChildOf(content, "h4", { textContent: "Enter player names" });
 
-    this.names = this._makeChildOf(content, "div", { id: "radio-btns" });
+    this.names = this._makeChildOf(content, "div", { id: "player-names"});
     const p1Label = this._makeChildOf(this.names, "label", {
       textContent: "Player 1",
     });
     this._makeChildOf(p1Label, "input", {
+      className: "inputs",
       type: "text",
       id: "p1name",
-      name: "p1name",
+      name: "p1name"
     });
-    this._makeChildOf(this.names, "h5", { textContent: "AI", id: "p2name" });
+    this._makeChildOf(this.names, "span", {textContent: "vs."})
+    this._makeChildOf(this.names, "div", { className: "ai-label", textContent: "AI", id: "p2name" });
 
-    this._makeChildOf(content, "button", { textContent: "Place ships" });
+    this._makeChildOf(content, "button", { className: "btns", textContent: "Place ships" });
 
     return content;
   }
@@ -66,9 +69,9 @@ export default class DOMHandler {
         textContent: "Player 2",
         id: "p2name",
       });
-      this._makeChildOf(p2Label, "input", { type: "text", name: "p2name" });
+      this._makeChildOf(p2Label, "input", {         className: "inputs", type: "text", name: "p2name" });
     } else {
-      this._makeChildOf(this.names, "h5", { textContent: "AI", id: "p2name" });
+      this._makeChildOf(this.names, "div", { className: "ai-label", textContent: "AI", id: "p2name" });
     }
   }
 
@@ -94,21 +97,22 @@ export default class DOMHandler {
       id: "ship-placement",
     });
 
-    const legend = this._makeChildOf(placement, "div", {});
-    const docked = this._makeChildOf(legend, "div", {});
-    docked.dataset.placement = "docked";
-    this._makeChildOf(docked, "div", { className: "ship-section" });
-    this._makeChildOf(docked, "span", { textContent: "Ships to be placed." });
-    const anchored = this._makeChildOf(legend, "div", {});
-    anchored.dataset.placement = "anchored";
-    this._makeChildOf(anchored, "div", { className: "ship-section" });
-    this._makeChildOf(anchored, "span", { textContent: "Placed ships." });
-    const pending = this._makeChildOf(legend, "div", {});
-    pending.dataset.placement = "pending";
-    this._makeChildOf(pending, "div", { className: "ship-section" });
-    this._makeChildOf(pending, "span", {
-      textContent: "Currently placing ship",
-    });
+    // const legend = this._makeChildOf(placement, "div", {});
+    // const docked = this._makeChildOf(legend, "div", {});
+    // docked.dataset.placement = "docked";
+    // this._makeChildOf(docked, "div", { className: "ship-section" });
+    // this._makeChildOf(docked, "span", { textContent: "Ships to be placed." });
+    // const anchored = this._makeChildOf(legend, "div", {});
+    // anchored.dataset.placement = "anchored";
+    // this._makeChildOf(anchored, "div", { className: "ship-section" });
+    // this._makeChildOf(anchored, "span", { textContent: "Placed ships." });
+    // const pending = this._makeChildOf(legend, "div", {});
+    // pending.dataset.placement = "pending";
+    // this._makeChildOf(pending, "div", { className: "ship-section" });
+    // this._makeChildOf(pending, "span", {
+    //   textContent: "Currently placing ship",
+    // });
+    this._makeChildOf(placement, "p", {textContent: "Place ships on the board by entering field value to place anchor on it and chose direction of your ship."})
 
     const shipDisplay = this._makeChildOf(placement, "div", {
       id: "ship-display",
@@ -126,18 +130,34 @@ export default class DOMHandler {
       }
     }
 
-    this._makeChildOf(placement, "input", {
+    const placeInput = this._makeChildOf(placement, "div", {id: "place-input"})
+    const coordLabel = this._makeChildOf(placeInput, "label", {textContent: "Coordinates"})
+    this._makeChildOf(coordLabel, "input", {
+      className: "inputs",
       type: "text",
       id: "coords",
       name: "00",
     });
-    this._makeChildOf(placement, "input", {
-      type: "checkbox",
-      id: "dir",
-      value: "hor",
+    const dir = this._makeChildOf(placeInput, "div", {});
+    const horLabel = this._makeChildOf(dir, "label", { className: "radio-squares" });
+    // this._makeChildOf(horLabel, "div", {className: "horizontal-bar"})
+    this._makeChildOf(horLabel, "input", {
+      type: "radio",
+      id: "horizontal",
+      name: "direction",
+      value: "horizontal",
+      checked: true,
     });
-    const placeBtn = this._makeChildOf(placement, "button", {
-      className: "btn",
+    this._makeChildOf(dir, "span", {textContent: "or"})
+    const verLabel = this._makeChildOf(dir, "label", { className: "radio-squares" }); 
+    this._makeChildOf(verLabel, "input", {
+      type: "radio",
+      id: "vertical",
+      name: "direction",
+      value: "vertical",
+    });
+    const placeBtn = this._makeChildOf(placeInput, "button", {
+      className: "btns",
       textContent: "Place Ship",
     });
     placeBtn.dataset.action = "place";

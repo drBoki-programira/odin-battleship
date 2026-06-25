@@ -1,59 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&family=Luckiest+Guy&display=swap');
+
 * {
   margin: 0;
   padding: 0;
+  font-family: "Comic Relief";
+  color: var(--fg-sec);
+  background-color: var(--bg-prim);
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--bg-ter);
+
+  --bg-prim: #121358;
+  --bg-sec: #232F72;
+  --bg-ter: #2f578a;
+  --bg-quat: #36ada3;
+  --fg-prim: #FFAa00;
+  --fg-sec: #ffd786;
+  /* --fg-ter: #519a66; */
+  --hl-prim: #ff007f;
+  --hl-sec: #7f00ff;
 }
 
 #header {
   text-align: center;
-  font-size: 2rem;
-  padding: 10px;
+  font-family: "Luckiest Guy";
+  font-size: 3rem;
+  background-image: linear-gradient(45deg, var(--bg-sec) 20%, var(--bg-prim) 30%);
+  color: var(--fg-prim);
+  padding: 20px;
+
 }
 
 #footer {
   text-align: center;
-  padding: 5px;
+  padding: 10px;
+  background-image: linear-gradient(45deg, var(--bg-prim) 70%, var(--bg-sec) 80%);
+}
+
+a {
+  color: var(--fg-prim);
 }
 
 #content {
   flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 9fr;
-  place-content: center;
-  gap: 10px;
-  max-width: fit-content;
-  margin: auto;
+  background-color: var(--bg-ter);
 }
 
 #start-screen {
-  grid-column: span 2;
   display: flex;
   flex-direction: column;
   gap: 30px;
   align-items: center;
+  width: fit-content;
+  height: fit-content;
+  margin: 30px auto;
+  padding: 20px 40px;
+  background-color: var(--bg-prim);
+  border-radius: 10px;
+  box-shadow: 5px 5px 15px 5px var(--bg-sec);
+}
+
+.radio-squares {
+  border-radius: 50%;
+  background-color: var(--bg-sec);
+  padding: 10px;
+  font-size: 1.5rem;
+  margin: 0 10px;
+}
+.radio-squares input[type="radio"] {
+  appearance: none;
+  position: absolute;
+}
+.radio-squares:has(input[type="radio"]:checked) {
+  background-color: var(--fg-prim);
+  color: #121358;
+}
+.radio-squares:hover {
+  box-shadow: 0 0 10px 2px var(--fg-sec);
+}
+
+#player-names {
   width: 100%;
-  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -20px;
+  text-align: center;
+  gap: 10px;
+}
+.inputs {
+  display: block;
+  width: 100px;
+  padding: 2px 5px;
+  border: 2px solid var(--bg-sec);
+  border-radius: 15px;
+  background-color: #ffd786;
+  color: #121358;
+}
+.inputs:focus {
+  background-color: var(--fg-prim);
+  box-shadow: 0 0 8px 1px var(--fg-sec);
+  outline: var(--fg-sec);
+  border: inline;
+}
+.ai-label {
+  width: 114px;
+  font-size: 2rem;
+  font-family: "Luckiest Guy";
+  color: var(--fg-prim);
+}
+
+.btns {
+  background-image: radial-gradient(var(--hl-sec), var(--hl-prim));
+  color: var(--fg-prim);
+  border: 1px solid var(--bg-quat);
+  border-bottom-width: 3px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  padding: 5px 15px;
+}
+.btns:hover {
+  filter: brightness(120%);
+}
+.btns:active {
+  margin-top: 2px;
+  border-bottom-width: 1px;
 }
 
 #info-text {
-  grid-column: span 2;
   text-align: center;
-  margin: 10px;
+  margin: 20px auto;
+  max-width: 600px;
   padding: 10px;
-  font-size: 2rem;
+  font-size: 1.2rem;
+  border: 5px solis var(--bg-sec);
+  border-radius: 10px;
 }
 
 .boards {
-  grid-column: span 2;
   display: flex;
   gap: 50px;
   justify-content: center;
+  width: fit-content;
+  margin: auto;
+  background-color: var(--bg-ter);
 }
 
 h2 {
@@ -61,14 +155,20 @@ h2 {
 }
 
 #ship-placement {
-  background-color: blueviolet;
+  border-radius: 10px;
   max-width: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 #ship-display {
-  padding: 20px;
+  background-color: var(--bg-sec);
+  border-radius: 5px;
+  padding: 30px;
   display: flex;
-  justify-items: center;
+  justify-content: space-evenly;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
@@ -78,20 +178,29 @@ h2 {
   display: flex;
   flex-direction: row;
 }
-[data-placement="docked"] {
-  background-color: aquamarine;
+.ship-element[data-placement="anchored"] > .ship-section {
+  background-color: var(--fg-sec);
 }
-[data-placement="anchored"] {
-  background-color: blue;
-}
-[data-placement="pending"] {
-  background-color: red;
+.ship-element[data-placement="pending"] > .ship-section {
+  outline: 3px solid var(--hl-sec);
 }
 
 .ship-section {
   height: 30px;
   width: 30px;
-  outline: 2px solid black;
+  background-color: var(--fg-prim);
+  outline: 2px solid var(--bg-prim);
+}
+
+#place-input {
+  display: flex;
+  gap: 10px;
+  text-align: center;
+}
+
+.horizontal-bar {
+  width: 50px;
+  height: 10px;
 }
 
 .board-tiles {
@@ -118,7 +227,7 @@ h2 {
 }
 
 [data-status="hit"] {
-  background-color: blue;
+  background-color: bg-prim;
 }
 
 [data-status="miss"] {

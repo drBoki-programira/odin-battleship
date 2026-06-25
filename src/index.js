@@ -26,6 +26,15 @@ class Game {
           ? "AI"
           : scn.querySelector("#p2name>input").value;
 
+      if (this.gameMode === "pvp") {
+        alert("Not implemented yet!")
+        return
+      }
+      if (p1name.length < 3 || p1name.length > 10) {
+        alert("Player name should habe between 3 and 10 characters")
+        return
+      }
+
       this.p1 = new Player(p1name);
       this.p2 = new Player(p2name);
 
