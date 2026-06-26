@@ -56,7 +56,7 @@ class Game {
   placeShipsEvents() {
     this.placementBoard.addEventListener("click", (event) => {
       const container = event.currentTarget;
-      const btn = event.target.closest(".btn");
+      const btn = event.target.closest(".btns");
       if (!btn) return;
 
       const action = btn.dataset.action;
@@ -101,7 +101,7 @@ class Game {
   parseInput() {
     const coords = document.querySelector("#coords").value;
     const [x, y] = coords.split("").map((coord) => parseInt(coord));
-    const direction = document.querySelector("#dir").checked;
+    const direction = document.querySelector("[name='direction']:checked").value === "horizontal"
 
     return [x, y, direction];
   }

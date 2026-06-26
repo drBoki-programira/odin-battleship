@@ -17,7 +17,7 @@ export default class DOMHandler {
 
   displayStartScreen() {
     this.main.innerHTML = "";
-    const content = this._makeChildOf(this.main, "div", { id: "start-screen" });
+    const content = this._makeChildOf(this.main, "div", { className: "base", id: "start-screen" });
 
     this._makeChildOf(content, "h2", { textContent: "Welcome to the game" });
     this._makeChildOf(content, "h4", { textContent: "Choose game mode" });
@@ -42,7 +42,7 @@ export default class DOMHandler {
 
     this._makeChildOf(content, "h4", { textContent: "Enter player names" });
 
-    this.names = this._makeChildOf(content, "div", { id: "player-names"});
+    this.names = this._makeChildOf(content, "div", { className: "row", id: "player-names"});
     const p1Label = this._makeChildOf(this.names, "label", {
       textContent: "Player 1",
     });
@@ -79,11 +79,12 @@ export default class DOMHandler {
     this.main.innerHTML = "";
 
     this.info = this._makeChildOf(this.main, "div", {
+      className: "base", 
       id: "info-text",
       textContent: "Ship placement",
     });
 
-    this.boards = this._makeChildOf(this.main, "div", { className: "boards" });
+    this.boards = this._makeChildOf(this.main, "div", { className: "row", id: "boards" });
   }
 
   updateInfo(message) {
@@ -94,25 +95,11 @@ export default class DOMHandler {
     const ships = player.shipsToPlace;
     let shipIdx = 0;
     const placement = this._makeChildOf(this.boards, "div", {
+      className: "base", 
       id: "ship-placement",
     });
 
-    // const legend = this._makeChildOf(placement, "div", {});
-    // const docked = this._makeChildOf(legend, "div", {});
-    // docked.dataset.placement = "docked";
-    // this._makeChildOf(docked, "div", { className: "ship-section" });
-    // this._makeChildOf(docked, "span", { textContent: "Ships to be placed." });
-    // const anchored = this._makeChildOf(legend, "div", {});
-    // anchored.dataset.placement = "anchored";
-    // this._makeChildOf(anchored, "div", { className: "ship-section" });
-    // this._makeChildOf(anchored, "span", { textContent: "Placed ships." });
-    // const pending = this._makeChildOf(legend, "div", {});
-    // pending.dataset.placement = "pending";
-    // this._makeChildOf(pending, "div", { className: "ship-section" });
-    // this._makeChildOf(pending, "span", {
-    //   textContent: "Currently placing ship",
-    // });
-    this._makeChildOf(placement, "p", {textContent: "Place ships on the board by entering field value to place anchor on it and chose direction of your ship."})
+    this._makeChildOf(placement, "p", {textContent: "Place highlited ship on the board by entering coordinates to drop anchor on and chose direction of your ship... Or just click random placement."})
 
     const shipDisplay = this._makeChildOf(placement, "div", {
       id: "ship-display",
@@ -130,17 +117,18 @@ export default class DOMHandler {
       }
     }
 
-    const placeInput = this._makeChildOf(placement, "div", {id: "place-input"})
-    const coordLabel = this._makeChildOf(placeInput, "label", {textContent: "Coordinates"})
+    const rowInput = this._makeChildOf(placement, "div", {className: "row"})
+    const coordLabel = this._makeChildOf(rowInput, "label", {textContent: "Coordinates"})
     this._makeChildOf(coordLabel, "input", {
       className: "inputs",
       type: "text",
       id: "coords",
-      name: "00",
+      name: "coords",
     });
-    const dir = this._makeChildOf(placeInput, "div", {});
-    const horLabel = this._makeChildOf(dir, "label", { className: "radio-squares" });
-    // this._makeChildOf(horLabel, "div", {className: "horizontal-bar"})
+    const dir = this._makeChildOf(rowInput, "div", {});
+    this._makeChildOf(dir, "div", {textContent: "Direction"})
+    const dirRadios = this._makeChildOf(dir, "div", {id: "dir-radios"})
+    const horLabel = this._makeChildOf(dirRadios, "label", { className: "radio-squares horizontal" });
     this._makeChildOf(horLabel, "input", {
       type: "radio",
       id: "horizontal",
@@ -148,27 +136,33 @@ export default class DOMHandler {
       value: "horizontal",
       checked: true,
     });
-    this._makeChildOf(dir, "span", {textContent: "or"})
-    const verLabel = this._makeChildOf(dir, "label", { className: "radio-squares" }); 
+    const verLabel = this._makeChildOf(dirRadios, "label", { className: "radio-squares vertical" }); 
     this._makeChildOf(verLabel, "input", {
       type: "radio",
       id: "vertical",
       name: "direction",
       value: "vertical",
+      
     });
-    const placeBtn = this._makeChildOf(placeInput, "button", {
+    const placeBtn = this._makeChildOf(rowInput, "button", {
       className: "btns",
       textContent: "Place Ship",
     });
     placeBtn.dataset.action = "place";
 
-    const rngBtn = this._makeChildOf(placement, "button", {
-      className: "btn",
-      textContent: "Random Placement",
+    const rowBtns = this._makeChildOf(placement, "div", {className: "row", id: "plc-btns"})
+    const rngBtn = this._makeChildOf(rowBtns, "button", {
+      className: "btns",
+      textContent: "Random",
     });
     rngBtn.dataset.action = "random";
-    const startBtn = this._makeChildOf(placement, "button", {
-      className: "btn",
+    const restartBtn = this._makeChildOf(rowBtns, "button", {
+      className: "btns",
+      textContent: "Restart",
+    });
+    restartBtn.dataset.action = "restart";
+    const startBtn = this._makeChildOf(rowBtns, "button", {
+      className: "btns",
       textContent: "Start Game",
     });
     startBtn.dataset.action = "start";
@@ -187,7 +181,7 @@ export default class DOMHandler {
   }
 
   displayBoard(player, revealed) {
-    const playerBoard = this._makeChildOf(this.boards, "div", {});
+    const playerBoard = this._makeChildOf(this.boards, "div", {className: "base"});
     this._makeChildOf(playerBoard, "h2", { textContent: player.name });
     const boardTiles = this._makeChildOf(playerBoard, "div", {
       className: "board-tiles",
@@ -222,12 +216,12 @@ export default class DOMHandler {
   }
 
   blockBoardClicks() {
-    const boards = document.querySelectorAll(".boards");
+    const boards = document.querySelectorAll(".board-tiles");
     boards.forEach((board) => board.classList.add("blocked"));
   }
 
   unblockBoardClicks() {
-    const boards = document.querySelectorAll(".boards");
+    const boards = document.querySelectorAll(".board-tiles");
     boards.forEach((board) => board.classList.remove("blocked"));
   }
 }
