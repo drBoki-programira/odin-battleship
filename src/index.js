@@ -132,7 +132,7 @@ class Game {
       const x = parseInt(tile.dataset.x);
       const y = parseInt(tile.dataset.y);
       const result = this.p2.board.recieveAttack(x, y);
-      this.ui.updateTile(tile, result);
+      this.ui.updateTile(tile, result, this.p2BoardDisplay);
 
       this.attackOutcome(result, this.p1, this.p2);
 
@@ -167,9 +167,6 @@ class Game {
     setTimeout(() => {
       this.ui.unblockBoardClicks();
       const prioAtts = this.p2.priorityAttack;
-      console.log("Made attacks: ", ...this.p2.madeAttacks);
-      console.log("Prio Attacks: ", ...prioAtts);
-      console.log("Hits: ", ...this.p2.hitConfirmed);
       let coords;
 
       if (prioAtts.length > 0) {
@@ -187,7 +184,7 @@ class Game {
       const tile = this.p1BoardDisplay.querySelector(
         `[data-x="${x}"][data-y="${y}"]`,
       );
-      this.ui.updateTile(tile, result);
+      this.ui.updateTile(tile, result, this.p1BoardDisplay);
       this.attackOutcome(result, this.p2, this.p1);
     }, 1500);
   }

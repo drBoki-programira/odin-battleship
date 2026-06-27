@@ -23,6 +23,7 @@ body {
   --fg-ter: #519a66;
   --hl-prim: #ff007f;
   --hl-sec: #7f00ff;
+  --hl-ter: #a30c0c;
 }
 
 .row {
@@ -151,10 +152,6 @@ a {
   background-color: var(--bg-ter);
 }
 
-h2 {
-  text-align: center;
-}
-
 #ship-placement {
   width: 400px;
   padding: 20px;
@@ -240,35 +237,52 @@ h2 {
   padding: 10px;
 }
 
+.board-name {
+  text-align: center;
+  font-family: "Luckiest Guy";
+  font-weight: 300;
+  color: var(--fg-prim);
+  font-size: 2rem;
+}
+
 .board-tiles {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
+  grid-template-columns: repeat(11, 1fr);
+  grid-template-rows: repeat(11, 1fr);
   gap: 2px;
-  background-color: black;
-  border: 2px solid black;
-  margin: 30px;
+  background-color: var(--bg-prim);
+  border: 2px solid var(--bg-prim);
   height: 400px;
   width: 400px;
 }
 
+.tile.label {
+  background-color: var(--bg-prim);
+}
+
 .tile {
   padding: 5px;
-  background-color: white;
+  background-color: var(--bg-ter);
   text-align: center;
-  cursor: crosshair;
+  font-weight: 600;
+  /* cursor: crosshair; */
 }
 
 .ship {
-  background-color: aqua;
+  background-color: var(--fg-prim);
 }
 
-[data-status="hit"] {
-  background-color: bg-prim;
+.tile[data-status="hit"] {
+  color: var(--hl-ter);
+  background-color: var(--fg-prim);
+}
+.tile[data-status="sunk"] {
+  color: var(--bg-prim);
+  background-color: var(--bg-sec);
 }
 
-[data-status="miss"] {
-  background-color: crimson;
+.tile[data-status="miss"] {
+  color: var(--bg-prim);
 }
 
 .blocked {

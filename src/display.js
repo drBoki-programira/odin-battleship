@@ -17,13 +17,19 @@ export default class DOMHandler {
 
   displayStartScreen() {
     this.main.innerHTML = "";
-    const content = this._makeChildOf(this.main, "div", { className: "base", id: "start-screen" });
+    const content = this._makeChildOf(this.main, "div", {
+      className: "base",
+      id: "start-screen",
+    });
 
     this._makeChildOf(content, "h2", { textContent: "Welcome to the game" });
     this._makeChildOf(content, "h4", { textContent: "Choose game mode" });
 
     const modes = this._makeChildOf(content, "div", {});
-    const pveLabel = this._makeChildOf(modes, "label", { className: "radio-squares", textContent: "PvE" });
+    const pveLabel = this._makeChildOf(modes, "label", {
+      className: "radio-squares",
+      textContent: "PvE",
+    });
     this._makeChildOf(pveLabel, "input", {
       type: "radio",
       id: "pve",
@@ -31,8 +37,11 @@ export default class DOMHandler {
       value: "pve",
       checked: true,
     });
-    this._makeChildOf(modes, "span", {textContent: "or"})
-    const pvpLabel = this._makeChildOf(modes, "label", { className: "radio-squares", textContent: "PvP" });
+    this._makeChildOf(modes, "span", { textContent: "or" });
+    const pvpLabel = this._makeChildOf(modes, "label", {
+      className: "radio-squares",
+      textContent: "PvP",
+    });
     this._makeChildOf(pvpLabel, "input", {
       type: "radio",
       id: "pvp",
@@ -42,7 +51,10 @@ export default class DOMHandler {
 
     this._makeChildOf(content, "h4", { textContent: "Enter player names" });
 
-    this.names = this._makeChildOf(content, "div", { className: "row", id: "player-names"});
+    this.names = this._makeChildOf(content, "div", {
+      className: "row",
+      id: "player-names",
+    });
     const p1Label = this._makeChildOf(this.names, "label", {
       textContent: "Player 1",
     });
@@ -50,12 +62,19 @@ export default class DOMHandler {
       className: "inputs",
       type: "text",
       id: "p1name",
-      name: "p1name"
+      name: "p1name",
     });
-    this._makeChildOf(this.names, "span", {textContent: "vs."})
-    this._makeChildOf(this.names, "div", { className: "ai-label", textContent: "AI", id: "p2name" });
+    this._makeChildOf(this.names, "span", { textContent: "vs." });
+    this._makeChildOf(this.names, "div", {
+      className: "ai-label",
+      textContent: "AI",
+      id: "p2name",
+    });
 
-    this._makeChildOf(content, "button", { className: "btns", textContent: "Place ships" });
+    this._makeChildOf(content, "button", {
+      className: "btns",
+      textContent: "Place ships",
+    });
 
     return content;
   }
@@ -69,9 +88,17 @@ export default class DOMHandler {
         textContent: "Player 2",
         id: "p2name",
       });
-      this._makeChildOf(p2Label, "input", {         className: "inputs", type: "text", name: "p2name" });
+      this._makeChildOf(p2Label, "input", {
+        className: "inputs",
+        type: "text",
+        name: "p2name",
+      });
     } else {
-      this._makeChildOf(this.names, "div", { className: "ai-label", textContent: "AI", id: "p2name" });
+      this._makeChildOf(this.names, "div", {
+        className: "ai-label",
+        textContent: "AI",
+        id: "p2name",
+      });
     }
   }
 
@@ -79,12 +106,15 @@ export default class DOMHandler {
     this.main.innerHTML = "";
 
     this.info = this._makeChildOf(this.main, "div", {
-      className: "base", 
+      className: "base",
       id: "info-text",
       textContent: "Ship placement",
     });
 
-    this.boards = this._makeChildOf(this.main, "div", { className: "row", id: "boards" });
+    this.boards = this._makeChildOf(this.main, "div", {
+      className: "row",
+      id: "boards",
+    });
   }
 
   updateInfo(message) {
@@ -95,11 +125,14 @@ export default class DOMHandler {
     const ships = player.shipsToPlace;
     let shipIdx = 0;
     const placement = this._makeChildOf(this.boards, "div", {
-      className: "base", 
+      className: "base",
       id: "ship-placement",
     });
 
-    this._makeChildOf(placement, "p", {textContent: "Place highlited ship on the board by entering coordinates to drop anchor on and chose direction of your ship... Or just click random placement."})
+    this._makeChildOf(placement, "p", {
+      textContent:
+        "Place highlited ship on the board by entering coordinates to drop anchor on and chose direction of your ship... Or just click random placement.",
+    });
 
     const shipDisplay = this._makeChildOf(placement, "div", {
       id: "ship-display",
@@ -117,8 +150,10 @@ export default class DOMHandler {
       }
     }
 
-    const rowInput = this._makeChildOf(placement, "div", {className: "row"})
-    const coordLabel = this._makeChildOf(rowInput, "label", {textContent: "Coordinates"})
+    const rowInput = this._makeChildOf(placement, "div", { className: "row" });
+    const coordLabel = this._makeChildOf(rowInput, "label", {
+      textContent: "Coordinates",
+    });
     this._makeChildOf(coordLabel, "input", {
       className: "inputs",
       type: "text",
@@ -126,9 +161,11 @@ export default class DOMHandler {
       name: "coords",
     });
     const dir = this._makeChildOf(rowInput, "div", {});
-    this._makeChildOf(dir, "div", {textContent: "Direction"})
-    const dirRadios = this._makeChildOf(dir, "div", {id: "dir-radios"})
-    const horLabel = this._makeChildOf(dirRadios, "label", { className: "radio-squares horizontal" });
+    this._makeChildOf(dir, "div", { textContent: "Direction" });
+    const dirRadios = this._makeChildOf(dir, "div", { id: "dir-radios" });
+    const horLabel = this._makeChildOf(dirRadios, "label", {
+      className: "radio-squares horizontal",
+    });
     this._makeChildOf(horLabel, "input", {
       type: "radio",
       id: "horizontal",
@@ -136,13 +173,14 @@ export default class DOMHandler {
       value: "horizontal",
       checked: true,
     });
-    const verLabel = this._makeChildOf(dirRadios, "label", { className: "radio-squares vertical" }); 
+    const verLabel = this._makeChildOf(dirRadios, "label", {
+      className: "radio-squares vertical",
+    });
     this._makeChildOf(verLabel, "input", {
       type: "radio",
       id: "vertical",
       name: "direction",
       value: "vertical",
-      
     });
     const placeBtn = this._makeChildOf(rowInput, "button", {
       className: "btns",
@@ -150,7 +188,10 @@ export default class DOMHandler {
     });
     placeBtn.dataset.action = "place";
 
-    const rowBtns = this._makeChildOf(placement, "div", {className: "row", id: "plc-btns"})
+    const rowBtns = this._makeChildOf(placement, "div", {
+      className: "row",
+      id: "plc-btns",
+    });
     const rngBtn = this._makeChildOf(rowBtns, "button", {
       className: "btns",
       textContent: "Random",
@@ -181,23 +222,38 @@ export default class DOMHandler {
   }
 
   displayBoard(player, revealed) {
-    const playerBoard = this._makeChildOf(this.boards, "div", {className: "base"});
-    this._makeChildOf(playerBoard, "h2", { textContent: player.name });
+    const playerBoard = this._makeChildOf(this.boards, "div", {
+      className: "base",
+    });
+    this._makeChildOf(playerBoard, "div", { className: "board-name", textContent: player.name });
     const boardTiles = this._makeChildOf(playerBoard, "div", {
       className: "board-tiles",
     });
+    const rowLabels = "ABCDEFGHIJ".split("");
+    const columnLabels = "0123456789".split("");
+    columnLabels.unshift("");
 
-    for (let x = 0; x < 10; x++) {
-      for (let y = 0; y < 10; y++) {
+    for (let x = -1; x < 10; x++) {
+      for (let y = -1; y < 10; y++) {
         const tile = this._makeChildOf(boardTiles, "div", {
           className: "tile",
         });
-        tile.dataset.x = x;
-        tile.dataset.y = y;
-        tile.dataset.status = "";
 
-        if (revealed) {
-          if (player.board.grid[x][y] > -1) tile.classList.add("ship");
+        if (x === -1) {
+          tile.textContent = columnLabels[y + 1];
+          tile.classList.add("label")
+        } else if (y === -1) {
+          tile.textContent = rowLabels[x];
+          tile.classList.add("label")
+        } else {
+          tile.dataset.x = x;
+          tile.dataset.y = y;
+          tile.dataset.status = "";
+          tile.dataset.id = player.board.grid[x][y]
+
+          if (revealed) {
+            if (player.board.grid[x][y] > -1) tile.classList.add("ship");
+          }
         }
       }
     }
@@ -205,10 +261,15 @@ export default class DOMHandler {
     return playerBoard;
   }
 
-  updateTile(tile, result) {
+  updateTile(tile, result, board) {
     tile.textContent = "X";
-    if (result === "HIT" || result === "SUNK") tile.dataset.status = "hit";
-    else tile.dataset.status = "miss";
+    if (result === "HIT") tile.dataset.status = "hit";
+    else if (result === "SUNK") {
+      const shipID = tile.dataset.id
+      const shipSections = board.querySelectorAll(`.tile[data-id="${shipID}"`)
+      console.log(shipSections)
+      shipSections.forEach(section => section.dataset.status = "sunk") 
+    } else tile.dataset.status = "miss";
   }
 
   removeBoard(boardElement) {
