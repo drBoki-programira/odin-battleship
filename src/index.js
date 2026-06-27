@@ -40,6 +40,7 @@ class Game {
       this.p2 = new Player(p2name);
 
       this.ui.displayInfoAndBoards();
+      this.ui.updateInfo(`${this.p1.name} place your ships.`)
       this.placementBoard = this.ui.displayPlacementBoard(this.p1);
       this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
       this.ui.updateShipPlacement(this.p1);
@@ -56,7 +57,6 @@ class Game {
 
   placeShipsEvents() {
     this.placementBoard.addEventListener("click", (event) => {
-      const container = event.currentTarget;
       const btn = event.target.closest(".btns");
       if (!btn) return;
 
@@ -64,44 +64,84 @@ class Game {
 
       switch (action) {
         case "place":
+          if (this.p1.shipsToPlace.length === 0) {
+            this.ui.updateInfo("All ships are placed. Ready to start the game.")
+            return
+          }
+
           const shipLen = this.p1.shipsToPlace.pop();
           try {
             const [x, y, dir] = this.parseInput();
             this.p1.board.place(new Ship(shipLen), x, y, dir);
-            this.ui.updateInfo("Ship placement succesful");
+            this.ui.updateInfo("Ship placement succesful.");
             this.ui.removeBoard(this.p1BoardDisplay);
             this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
             this.ui.updateShipPlacement(this.p1);
+            this.ui.resetInput("coords")
           } catch (err) {
             this.p1.shipsToPlace.push(shipLen);
             this.ui.updateInfo(err.message);
+            this.ui.flashError("coords")
           }
           break;
         case "random":
           this.randomShipPlacement(this.p1);
           this.ui.removeBoard(this.p1BoardDisplay);
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-          this.ui.updateInfo("All ships are placed. Ready for game start.");
+          this.ui.updateInfo("All ships are placed. Ready to start the game.");
           this.ui.updateShipPlacement(this.p1);
           break;
+        case "restart":
+          const playerName = this.p1.name
+          this.p1 = new Player(playerName)
+          this.ui.updateInfo("Start placing ships from the beggining again.");
+          this.ui.removeBoard(this.p1BoardDisplay);
+          this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+          this.ui.updateShipPlacement(this.p1);
+          break
         case "start":
+          if (this.p1.shipsToPlace.length !== 0) {
+            this.ui.updateInfo("You still have ships to place!")
+            return
+          }
+
           if (this.gameMode === "pve") {
             this.randomShipPlacement(this.p2);
             this.p2.resetMadeAttacks();
           }
 
           this.ui.displayInfoAndBoards();
+          this.ui.updateInfo("Let the battle begin!")
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
           this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
           this.addBoardListener();
+          break
         default:
       }
     });
   }
 
   parseInput() {
+    const letterToCoord = "ABCDEFGHIJ".split("")
     const coords = document.querySelector("#coords").value;
-    const [x, y] = coords.split("").map((coord) => parseInt(coord));
+
+    if (coords.length !== 2) {
+      throw new RangeError("Coordinates need two symbols. Example: G6")
+    }
+
+    const [xString, yString] = coords.split("")
+
+    if (!letterToCoord.includes(xString.toUpperCase())) {
+      throw new TypeError("First symbol must be a letter. (A-J)")
+    }
+
+    const x = letterToCoord.findIndex(letter => letter === xString.toUpperCase())
+    const y = parseInt(yString)
+
+    if (isNaN(y)) {
+      throw new TypeError("Second symbol must be a number.")
+    }
+
     const direction = document.querySelector("[name='direction']:checked").value === "horizontal"
 
     return [x, y, direction];

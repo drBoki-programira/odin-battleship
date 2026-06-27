@@ -6,6 +6,7 @@
   font-family: "Comic Relief";
   color: var(--fg-sec);
   background-color: var(--bg-prim);
+  cursor: default;
 }
 
 body {
@@ -138,7 +139,7 @@ a {
 
 .invalid {
   box-shadow: 0 0 8px 2px var(--hl-ter);
-  background-color: var(--fg-ter);
+  background-color: var(--hl-ter);
 }
 
 .btns {
@@ -275,20 +276,23 @@ a {
   width: 400px;
 }
 
-.tile.label {
+.label {
   background-color: var(--bg-prim);
+  font-weight: 600;
 }
 
 .tile {
   padding: 5px;
   background-color: var(--bg-ter);
-  text-align: center;
   font-weight: 600;
-  /* cursor: crosshair; */
 }
 
 .ship {
   background-color: var(--fg-prim);
+}
+
+[data-visible="no"] > .tile[data-status=""] {
+  cursor: crosshair;
 }
 
 .tile[data-status="hit"] {

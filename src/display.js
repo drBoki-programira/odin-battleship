@@ -112,7 +112,6 @@ export default class DOMHandler {
     this.info = this._makeChildOf(this.main, "div", {
       className: "base",
       id: "info-text",
-      textContent: "Ship placement",
     });
 
     this.boards = this._makeChildOf(this.main, "div", {
@@ -163,6 +162,7 @@ export default class DOMHandler {
       type: "text",
       id: "coords",
       name: "coords",
+      maxlength: 2,
     });
     const dir = this._makeChildOf(rowInput, "div", {});
     this._makeChildOf(dir, "div", { textContent: "Direction" });
@@ -222,6 +222,7 @@ export default class DOMHandler {
       const idx = parseInt(ship.dataset.idx);
       if (len === idx) ship.dataset.placement = "pending";
       else if (len < idx) ship.dataset.placement = "anchored";
+      else ship.dataset.placement = "docked"
     });
   }
 
@@ -245,10 +246,10 @@ export default class DOMHandler {
 
         if (x === -1) {
           tile.textContent = columnLabels[y + 1];
-          tile.classList.add("label")
+          tile.className = "label"
         } else if (y === -1) {
           tile.textContent = rowLabels[x];
-          tile.classList.add("label")
+          tile.className = "label"
         } else {
           tile.dataset.x = x;
           tile.dataset.y = y;
@@ -261,6 +262,8 @@ export default class DOMHandler {
         }
       }
     }
+
+    if (!revealed) boardTiles.dataset.visible = "no"
 
     return playerBoard;
   }
@@ -295,7 +298,14 @@ export default class DOMHandler {
     element.classList.toggle("invalid")
     setTimeout(() => {
       element.classList.toggle("invalid")
+      element.value = ""
       element.focus()
     }, 1000)  
+  }
+
+  resetInput(selector) {
+    const element = document.getElementById(selector)
+    element.value = ""
+    element.focus()
   }
 }
