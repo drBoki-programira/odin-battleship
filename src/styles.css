@@ -45,6 +45,20 @@ body {
   box-shadow: 5px 5px 15px 5px var(--bg-sec);
 }
 
+.center-children {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
 #header {
   text-align: center;
   font-family: "Luckiest Guy";
@@ -76,22 +90,22 @@ a {
   padding: 20px 40px;
 }
 
-.radio-squares {
+.radio-field {
   border-radius: 50%;
   background-color: var(--bg-sec);
   padding: 10px;
   font-size: 1.5rem;
   margin: 0 10px;
 }
-.radio-squares input[type="radio"] {
+.radio-field input[type="radio"] {
   appearance: none;
   position: absolute;
 }
-.radio-squares:has(input[type="radio"]:checked) {
+.radio-field:has(input[type="radio"]:checked) {
   background-color: var(--fg-prim);
   color: #121358;
 }
-.radio-squares:hover {
+.radio-field:hover {
   box-shadow: 0 0 10px 2px var(--fg-sec);
 }
 
@@ -120,6 +134,11 @@ a {
   font-size: 2rem;
   font-family: "Luckiest Guy";
   color: var(--fg-prim);
+}
+
+.invalid {
+  box-shadow: 0 0 8px 2px var(--hl-ter);
+  background-color: var(--fg-ter);
 }
 
 .btns {
@@ -200,13 +219,13 @@ a {
   align-items: center;
 }
 
-.radio-squares.horizontal {
+.radio-field.horizontal {
   display: inline-block;
   border-radius: 0;
   width: 36px;
   height: 8px;
 }
-.radio-squares.vertical {
+.radio-field.vertical {
   display: inline-block;
   border-radius: 0;
   width: 8px;

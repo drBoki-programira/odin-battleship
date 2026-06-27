@@ -27,7 +27,7 @@ export default class DOMHandler {
 
     const modes = this._makeChildOf(content, "div", {});
     const pveLabel = this._makeChildOf(modes, "label", {
-      className: "radio-squares",
+      className: "radio-field",
       textContent: "PvE",
     });
     this._makeChildOf(pveLabel, "input", {
@@ -39,7 +39,7 @@ export default class DOMHandler {
     });
     this._makeChildOf(modes, "span", { textContent: "or" });
     const pvpLabel = this._makeChildOf(modes, "label", {
-      className: "radio-squares",
+      className: "radio-field",
       textContent: "PvP",
     });
     this._makeChildOf(pvpLabel, "input", {
@@ -49,7 +49,9 @@ export default class DOMHandler {
       value: "pvp",
     });
 
-    this._makeChildOf(content, "h4", { textContent: "Enter player names" });
+    const nameLabels = this._makeChildOf(content, "div", {className: "center-children"})
+    this._makeChildOf(nameLabels, "h4", { textContent: "Enter player names" });
+    this._makeChildOf(nameLabels, "p", {textContent: "(between 3 and 10 characters)"})
 
     this.names = this._makeChildOf(content, "div", {
       className: "row",
@@ -63,6 +65,8 @@ export default class DOMHandler {
       type: "text",
       id: "p1name",
       name: "p1name",
+      minlength: 3,
+      maxlength: 10,
     });
     this._makeChildOf(this.names, "span", { textContent: "vs." });
     this._makeChildOf(this.names, "div", {
@@ -164,7 +168,7 @@ export default class DOMHandler {
     this._makeChildOf(dir, "div", { textContent: "Direction" });
     const dirRadios = this._makeChildOf(dir, "div", { id: "dir-radios" });
     const horLabel = this._makeChildOf(dirRadios, "label", {
-      className: "radio-squares horizontal",
+      className: "radio-field horizontal",
     });
     this._makeChildOf(horLabel, "input", {
       type: "radio",
@@ -174,7 +178,7 @@ export default class DOMHandler {
       checked: true,
     });
     const verLabel = this._makeChildOf(dirRadios, "label", {
-      className: "radio-squares vertical",
+      className: "radio-field vertical",
     });
     this._makeChildOf(verLabel, "input", {
       type: "radio",
@@ -267,7 +271,6 @@ export default class DOMHandler {
     else if (result === "SUNK") {
       const shipID = tile.dataset.id
       const shipSections = board.querySelectorAll(`.tile[data-id="${shipID}"`)
-      console.log(shipSections)
       shipSections.forEach(section => section.dataset.status = "sunk") 
     } else tile.dataset.status = "miss";
   }
@@ -284,5 +287,15 @@ export default class DOMHandler {
   unblockBoardClicks() {
     const boards = document.querySelectorAll(".board-tiles");
     boards.forEach((board) => board.classList.remove("blocked"));
+  }
+
+  flashError(selector) {
+    const element = document.getElementById(selector)
+
+    element.classList.toggle("invalid")
+    setTimeout(() => {
+      element.classList.toggle("invalid")
+      element.focus()
+    }, 1000)  
   }
 }

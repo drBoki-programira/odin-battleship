@@ -30,8 +30,9 @@ class Game {
         alert("Not implemented yet!")
         return
       }
+
       if (p1name.length < 3 || p1name.length > 10) {
-        alert("Player name should habe between 3 and 10 characters")
+        this.ui.flashError("p1name")
         return
       }
 
