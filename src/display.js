@@ -72,7 +72,7 @@ export default class DOMHandler {
     this._makeChildOf(this.names, "div", {
       className: "ai-label",
       textContent: "AI",
-      id: "p2name",
+      id: "p2label",
     });
 
     this._makeChildOf(content, "button", {
@@ -84,24 +84,28 @@ export default class DOMHandler {
   }
 
   updatePlayer2(mode) {
-    const p2 = this.names.querySelector("#p2name");
+    const p2 = this.names.querySelector("#p2label");
     p2.remove();
 
     if (mode === "pvp") {
       const p2Label = this._makeChildOf(this.names, "label", {
         textContent: "Player 2",
-        id: "p2name",
+        id: "p2label",
+        
       });
       this._makeChildOf(p2Label, "input", {
         className: "inputs",
         type: "text",
         name: "p2name",
+        id: "p2name",
+        minlength: 3,
+        maxlength: 10
       });
     } else {
       this._makeChildOf(this.names, "div", {
         className: "ai-label",
         textContent: "AI",
-        id: "p2name",
+        id: "p2label",
       });
     }
   }
@@ -124,7 +128,7 @@ export default class DOMHandler {
     this.info.textContent = message;
   }
 
-  displayPlacementBoard(player) {
+  displayPlacementBoard(player, mode) {
     const ships = player.shipsToPlace;
     let shipIdx = 0;
     const placement = this._makeChildOf(this.boards, "div", {
@@ -211,6 +215,10 @@ export default class DOMHandler {
       textContent: "Start Game",
     });
     startBtn.dataset.action = "start";
+    if (mode === "pvp") {
+      startBtn.textContent = "Next Player"
+      startBtn.dataset.action = "next"
+    }
 
     return placement;
   }
@@ -307,5 +315,20 @@ export default class DOMHandler {
     const element = document.getElementById(selector)
     element.value = ""
     element.focus()
+  }
+
+  revealShips(boardElement) {
+    const boardTiles = boardElement.querySelector(".board-tiles")
+    boardTiles.dataset.visible = "yes"
+    const allTiles = [...boardElement.querySelectorAll(".tile[data-id]")]
+    const hiddenShips = allTiles.filter(tile => tile.dataset.id > -1)
+    hiddenShips.forEach(ship => ship.classList.add("ship"))
+  }
+
+  hideShips(boardElement) {
+    const boardTiles = boardElement.querySelector(".board-tiles")
+    boardTiles.dataset.visible = "no"
+    const hiddenShips = boardElement.querySelectorAll(".ship[data-status='']")
+    hiddenShips.forEach(ship => ship.classList.remove("ship"))
   }
 }

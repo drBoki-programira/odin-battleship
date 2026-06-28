@@ -22,29 +22,32 @@ class Game {
       this.gameMode = scn.querySelector("[name='mode']:checked").value;
       const p1name = scn.querySelector("#p1name").value;
       const p2name =
-        this.gameMode === "pve"
-          ? "AI"
-          : scn.querySelector("#p2name>input").value;
-
-      if (this.gameMode === "pvp") {
-        alert("Not implemented yet!")
-        return
-      }
+        this.gameMode === "pve" ? "AI" : scn.querySelector("#p2name").value;
 
       if (p1name.length < 3 || p1name.length > 10) {
-        this.ui.flashError("p1name")
-        return
+        this.ui.flashError("p1name");
+        return;
+      }
+
+      if (this.gameMode === "pvp") {
+        if (p2name.length < 3 || p2name.length > 10) {
+          this.ui.flashError("p2name");
+          return;
+        }
       }
 
       this.p1 = new Player(p1name);
       this.p2 = new Player(p2name);
 
       this.ui.displayInfoAndBoards();
-      this.ui.updateInfo(`${this.p1.name} place your ships.`)
-      this.placementBoard = this.ui.displayPlacementBoard(this.p1);
+      this.ui.updateInfo(`${this.p1.name} place your ships.`);
+      this.placementBoard = this.ui.displayPlacementBoard(
+        this.p1,
+        this.gameMode,
+      );
       this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
       this.ui.updateShipPlacement(this.p1);
-      this.placeShipsEvents();
+      this.placeShipsEvents(this.p1, this.p1BoardDisplay);
     });
 
     this.startScreen.addEventListener("change", (event) => {
@@ -55,7 +58,7 @@ class Game {
     });
   }
 
-  placeShipsEvents() {
+  placeShipsEvents(player, playerBoardDisplay) {
     this.placementBoard.addEventListener("click", (event) => {
       const btn = event.target.closest(".btns");
       if (!btn) return;
@@ -64,45 +67,55 @@ class Game {
 
       switch (action) {
         case "place":
-          if (this.p1.shipsToPlace.length === 0) {
-            this.ui.updateInfo("All ships are placed. Ready to start the game.")
-            return
+          if (player.shipsToPlace.length === 0) {
+            this.ui.updateInfo(
+              "All ships are placed. Ready to start the game.",
+            );
+            return;
           }
 
-          const shipLen = this.p1.shipsToPlace.pop();
+          const shipLen = player.shipsToPlace.pop();
           try {
             const [x, y, dir] = this.parseInput();
-            this.p1.board.place(new Ship(shipLen), x, y, dir);
+            player.board.place(new Ship(shipLen), x, y, dir);
             this.ui.updateInfo("Ship placement succesful.");
-            this.ui.removeBoard(this.p1BoardDisplay);
-            this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-            this.ui.updateShipPlacement(this.p1);
-            this.ui.resetInput("coords")
+            this.ui.removeBoard(playerBoardDisplay);
+            playerBoardDisplay = this.ui.displayBoard(player, true);
+            this.ui.updateShipPlacement(player);
+            this.ui.resetInput("coords");
           } catch (err) {
-            this.p1.shipsToPlace.push(shipLen);
+            player.shipsToPlace.push(shipLen);
             this.ui.updateInfo(err.message);
-            this.ui.flashError("coords")
+            this.ui.flashError("coords");
           }
           break;
         case "random":
-          this.randomShipPlacement(this.p1);
-          this.ui.removeBoard(this.p1BoardDisplay);
-          this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
+          this.randomShipPlacement(player);
+          this.ui.removeBoard(playerBoardDisplay);
+          playerBoardDisplay = this.ui.displayBoard(player, true);
           this.ui.updateInfo("All ships are placed. Ready to start the game.");
-          this.ui.updateShipPlacement(this.p1);
+          this.ui.updateShipPlacement(player);
           break;
         case "restart":
-          const playerName = this.p1.name
-          this.p1 = new Player(playerName)
+          const playerName = player.name;
+          player = new Player(playerName);
           this.ui.updateInfo("Start placing ships from the beggining again.");
-          this.ui.removeBoard(this.p1BoardDisplay);
-          this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
-          this.ui.updateShipPlacement(this.p1);
-          break
+          this.ui.removeBoard(playerBoardDisplay);
+          playerBoardDisplay = this.ui.displayBoard(player, true);
+          this.ui.updateShipPlacement(player);
+          break;
+        case "next":
+          this.ui.displayInfoAndBoards();
+          this.ui.updateInfo(`${this.p2.name} place your ships.`);
+          this.placementBoard = this.ui.displayPlacementBoard(this.p2);
+          this.p2BoardDisplay = this.ui.displayBoard(this.p2, true);
+          this.ui.updateShipPlacement(this.p2);
+          this.placeShipsEvents(this.p2, this.p2BoardDisplay);
+          break;
         case "start":
-          if (this.p1.shipsToPlace.length !== 0) {
-            this.ui.updateInfo("You still have ships to place!")
-            return
+          if (player.shipsToPlace.length !== 0) {
+            this.ui.updateInfo("You still have ships to place!");
+            return;
           }
 
           if (this.gameMode === "pve") {
@@ -111,38 +124,42 @@ class Game {
           }
 
           this.ui.displayInfoAndBoards();
-          this.ui.updateInfo("Let the battle begin!")
+          this.ui.updateInfo("Let the battle begin!");
           this.p1BoardDisplay = this.ui.displayBoard(this.p1, true);
           this.p2BoardDisplay = this.ui.displayBoard(this.p2, false);
           this.addBoardListener();
-          break
+          break;
         default:
       }
     });
   }
 
   parseInput() {
-    const letterToCoord = "ABCDEFGHIJ".split("")
+    const letterToCoord = "ABCDEFGHIJ".split("");
     const coords = document.querySelector("#coords").value;
 
     if (coords.length !== 2) {
-      throw new RangeError("Coordinates need two symbols. Example: G6")
+      throw new RangeError("Coordinates need two symbols. Example: G6");
     }
 
-    const [xString, yString] = coords.split("")
+    const [xString, yString] = coords.split("");
 
     if (!letterToCoord.includes(xString.toUpperCase())) {
-      throw new TypeError("First symbol must be a letter. (A-J)")
+      throw new TypeError("First symbol must be a letter. (A-J)");
     }
 
-    const x = letterToCoord.findIndex(letter => letter === xString.toUpperCase())
-    const y = parseInt(yString)
+    const x = letterToCoord.findIndex(
+      (letter) => letter === xString.toUpperCase(),
+    );
+    const y = parseInt(yString);
 
     if (isNaN(y)) {
-      throw new TypeError("Second symbol must be a number.")
+      throw new TypeError("Second symbol must be a number.");
     }
 
-    const direction = document.querySelector("[name='direction']:checked").value === "horizontal"
+    const direction =
+      document.querySelector("[name='direction']:checked").value ===
+      "horizontal";
 
     return [x, y, direction];
   }
@@ -180,6 +197,50 @@ class Game {
       if (this.gameOver) return;
 
       if (this.gameMode === "pve") this.AIAttack();
+      else {
+        this.ui.blockBoardClicks();
+        setTimeout(() => {
+          this.ui.updateInfo(
+            `Preparing for ${this.p2.name}'s turn. Click anywhere to continue.`,
+          );
+          this.ui.hideShips(this.p1BoardDisplay);
+          window.addEventListener("click", () => {
+            this.ui.unblockBoardClicks();
+            this.ui.updateInfo(`Make your move, ${this.p2.name}`);
+            this.ui.revealShips(this.p2BoardDisplay)
+          }, { once: true });
+        }, 1500);
+      }
+    });
+
+    this.p1BoardDisplay.addEventListener("click", (event) => {
+      const tile = event.target.closest(".tile");
+      if (!tile) return;
+
+      const status = tile.dataset.status;
+      if (status) return;
+
+      const x = parseInt(tile.dataset.x);
+      const y = parseInt(tile.dataset.y);
+      const result = this.p1.board.recieveAttack(x, y);
+      this.ui.updateTile(tile, result, this.p1BoardDisplay);
+
+      this.attackOutcome(result, this.p2, this.p1);
+
+      if (this.gameOver) return;
+
+      this.ui.blockBoardClicks();
+      setTimeout(() => {
+        this.ui.updateInfo(
+          `Preparing for ${this.p1.name}'s turn. Click anywhere to continue.`,
+        );
+        this.ui.hideShips(this.p2BoardDisplay);
+        window.addEventListener("click", () => {
+          this.ui.unblockBoardClicks();
+          this.ui.updateInfo(`Make your move, ${this.p1.name}`);
+          this.ui.revealShips(this.p1BoardDisplay)
+        }, { once: true });
+      }, 1500);
     });
   }
 
@@ -193,6 +254,8 @@ class Game {
         this.gameOver = true;
         this.ui.updateInfo(`GAME OVER. ${attacker.name} wins!`);
         this.ui.blockBoardClicks();
+        this.ui.revealShips(this.p1BoardDisplay)
+        this.ui.revealShips(this.p2BoardDisplay)
       } else {
         this.ui.updateInfo(
           `${attacker.name} has SUNK the ship of ${reciever.name}!`,
