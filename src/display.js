@@ -49,9 +49,13 @@ export default class DOMHandler {
       value: "pvp",
     });
 
-    const nameLabels = this._makeChildOf(content, "div", {className: "center-children"})
+    const nameLabels = this._makeChildOf(content, "div", {
+      className: "center-children",
+    });
     this._makeChildOf(nameLabels, "h4", { textContent: "Enter player names" });
-    this._makeChildOf(nameLabels, "p", {textContent: "(between 3 and 10 characters)"})
+    this._makeChildOf(nameLabels, "p", {
+      textContent: "(between 3 and 10 characters)",
+    });
 
     this.names = this._makeChildOf(content, "div", {
       className: "row",
@@ -91,7 +95,6 @@ export default class DOMHandler {
       const p2Label = this._makeChildOf(this.names, "label", {
         textContent: "Player 2",
         id: "p2label",
-        
       });
       this._makeChildOf(p2Label, "input", {
         className: "inputs",
@@ -99,7 +102,7 @@ export default class DOMHandler {
         name: "p2name",
         id: "p2name",
         minlength: 3,
-        maxlength: 10
+        maxlength: 10,
       });
     } else {
       this._makeChildOf(this.names, "div", {
@@ -216,8 +219,8 @@ export default class DOMHandler {
     });
     startBtn.dataset.action = "start";
     if (mode === "pvp") {
-      startBtn.textContent = "Next Player"
-      startBtn.dataset.action = "next"
+      startBtn.textContent = "Next Player";
+      startBtn.dataset.action = "next";
     }
 
     return placement;
@@ -230,7 +233,7 @@ export default class DOMHandler {
       const idx = parseInt(ship.dataset.idx);
       if (len === idx) ship.dataset.placement = "pending";
       else if (len < idx) ship.dataset.placement = "anchored";
-      else ship.dataset.placement = "docked"
+      else ship.dataset.placement = "docked";
     });
   }
 
@@ -238,7 +241,10 @@ export default class DOMHandler {
     const playerBoard = this._makeChildOf(this.boards, "div", {
       className: "base",
     });
-    this._makeChildOf(playerBoard, "div", { className: "board-name", textContent: player.name });
+    this._makeChildOf(playerBoard, "div", {
+      className: "board-name",
+      textContent: player.name,
+    });
     const boardTiles = this._makeChildOf(playerBoard, "div", {
       className: "board-tiles",
     });
@@ -254,15 +260,15 @@ export default class DOMHandler {
 
         if (x === -1) {
           tile.textContent = columnLabels[y + 1];
-          tile.className = "label"
+          tile.className = "label";
         } else if (y === -1) {
           tile.textContent = rowLabels[x];
-          tile.className = "label"
+          tile.className = "label";
         } else {
           tile.dataset.x = x;
           tile.dataset.y = y;
           tile.dataset.status = "";
-          tile.dataset.id = player.board.grid[x][y]
+          tile.dataset.id = player.board.grid[x][y];
 
           if (revealed) {
             if (player.board.grid[x][y] > -1) tile.classList.add("ship");
@@ -271,7 +277,7 @@ export default class DOMHandler {
       }
     }
 
-    if (!revealed) boardTiles.dataset.visible = "no"
+    if (!revealed) boardTiles.dataset.visible = "no";
 
     return playerBoard;
   }
@@ -280,9 +286,9 @@ export default class DOMHandler {
     tile.textContent = "X";
     if (result === "HIT") tile.dataset.status = "hit";
     else if (result === "SUNK") {
-      const shipID = tile.dataset.id
-      const shipSections = board.querySelectorAll(`.tile[data-id="${shipID}"`)
-      shipSections.forEach(section => section.dataset.status = "sunk") 
+      const shipID = tile.dataset.id;
+      const shipSections = board.querySelectorAll(`.tile[data-id="${shipID}"`);
+      shipSections.forEach((section) => (section.dataset.status = "sunk"));
     } else tile.dataset.status = "miss";
   }
 
@@ -301,34 +307,39 @@ export default class DOMHandler {
   }
 
   flashError(selector) {
-    const element = document.getElementById(selector)
+    const element = document.getElementById(selector);
 
-    element.classList.toggle("invalid")
+    element.classList.toggle("invalid");
     setTimeout(() => {
-      element.classList.toggle("invalid")
-      element.value = ""
-      element.focus()
-    }, 1000)  
+      element.classList.toggle("invalid");
+      element.value = "";
+      element.focus();
+    }, 1000);
   }
 
   resetInput(selector) {
-    const element = document.getElementById(selector)
-    element.value = ""
-    element.focus()
+    const element = document.getElementById(selector);
+    element.value = "";
+    element.focus();
   }
 
   revealShips(boardElement) {
-    const boardTiles = boardElement.querySelector(".board-tiles")
-    boardTiles.dataset.visible = "yes"
-    const allTiles = [...boardElement.querySelectorAll(".tile[data-id]")]
-    const hiddenShips = allTiles.filter(tile => tile.dataset.id > -1)
-    hiddenShips.forEach(ship => ship.classList.add("ship"))
+    const boardTiles = boardElement.querySelector(".board-tiles");
+    boardTiles.dataset.visible = "yes";
+    const allTiles = [...boardElement.querySelectorAll(".tile[data-id]")];
+    const hiddenShips = allTiles.filter((tile) => tile.dataset.id > -1);
+    hiddenShips.forEach((ship) => ship.classList.add("ship"));
   }
 
   hideShips(boardElement) {
-    const boardTiles = boardElement.querySelector(".board-tiles")
-    boardTiles.dataset.visible = "no"
-    const hiddenShips = boardElement.querySelectorAll(".ship[data-status='']")
-    hiddenShips.forEach(ship => ship.classList.remove("ship"))
+    const boardTiles = boardElement.querySelector(".board-tiles");
+    boardTiles.dataset.visible = "no";
+    const hiddenShips = boardElement.querySelectorAll(".ship[data-status='']");
+    hiddenShips.forEach((ship) => ship.classList.remove("ship"));
+  }
+
+  changeBoardDimnes() {
+    const boards = document.querySelectorAll(".board-tiles");
+    boards.forEach((board) => board.classList.toggle("dim"));
   }
 }

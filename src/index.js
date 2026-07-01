@@ -200,15 +200,21 @@ class Game {
       else {
         this.ui.blockBoardClicks();
         setTimeout(() => {
+          this.ui.changeBoardDimnes();
           this.ui.updateInfo(
             `Preparing for ${this.p2.name}'s turn. Click anywhere to continue.`,
           );
           this.ui.hideShips(this.p1BoardDisplay);
-          window.addEventListener("click", () => {
-            this.ui.unblockBoardClicks();
-            this.ui.updateInfo(`Make your move, ${this.p2.name}`);
-            this.ui.revealShips(this.p2BoardDisplay)
-          }, { once: true });
+          window.addEventListener(
+            "click",
+            () => {
+              this.ui.changeBoardDimnes();
+              this.ui.unblockBoardClicks();
+              this.ui.updateInfo(`Make your move, ${this.p2.name}`);
+              this.ui.revealShips(this.p2BoardDisplay);
+            },
+            { once: true },
+          );
         }, 1500);
       }
     });
@@ -231,15 +237,21 @@ class Game {
 
       this.ui.blockBoardClicks();
       setTimeout(() => {
+        this.ui.changeBoardDimnes();
         this.ui.updateInfo(
           `Preparing for ${this.p1.name}'s turn. Click anywhere to continue.`,
         );
         this.ui.hideShips(this.p2BoardDisplay);
-        window.addEventListener("click", () => {
-          this.ui.unblockBoardClicks();
-          this.ui.updateInfo(`Make your move, ${this.p1.name}`);
-          this.ui.revealShips(this.p1BoardDisplay)
-        }, { once: true });
+        window.addEventListener(
+          "click",
+          () => {
+            this.ui.changeBoardDimnes();
+            this.ui.unblockBoardClicks();
+            this.ui.updateInfo(`Make your move, ${this.p1.name}`);
+            this.ui.revealShips(this.p1BoardDisplay);
+          },
+          { once: true },
+        );
       }, 1500);
     });
   }
@@ -254,8 +266,8 @@ class Game {
         this.gameOver = true;
         this.ui.updateInfo(`GAME OVER. ${attacker.name} wins!`);
         this.ui.blockBoardClicks();
-        this.ui.revealShips(this.p1BoardDisplay)
-        this.ui.revealShips(this.p2BoardDisplay)
+        this.ui.revealShips(this.p1BoardDisplay);
+        this.ui.revealShips(this.p2BoardDisplay);
       } else {
         this.ui.updateInfo(
           `${attacker.name} has SUNK the ship of ${reciever.name}!`,
