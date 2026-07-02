@@ -173,11 +173,13 @@ a {
 
 #info-text {
   margin: 20px auto;
-  width: 600px;
+  width: 90%;
+  max-width: 600px;
   font-size: 1.2rem;
 }
 
 #boards {
+  flex-wrap: wrap;
   gap: 50px;
   width: fit-content;
   margin: auto;

@@ -97,8 +97,7 @@ class Game {
           this.ui.updateShipPlacement(player);
           break;
         case "restart":
-          const playerName = player.name;
-          player = new Player(playerName);
+          player.resetBoard()
           this.ui.updateInfo("Start placing ships from the beggining again.");
           this.ui.removeBoard(playerBoardDisplay);
           playerBoardDisplay = this.ui.displayBoard(player, true);

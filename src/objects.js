@@ -101,6 +101,11 @@ class Player {
     this.madeAttacks = new Set();
   }
 
+  resetBoard() {
+    this.board = new Gameboard();
+    this.shipsToPlace = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4];
+  }
+
   randomCoords() {
     while (true) {
       const x = Math.floor(Math.random() * 10);
